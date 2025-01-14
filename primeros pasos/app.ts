@@ -2,6 +2,6 @@
 
 console.log("hello world");
 
-let item = "Bolsa";
+var item = "Bolsa";
 
-let num = 2;
+var num = 2;
