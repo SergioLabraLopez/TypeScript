@@ -6,7 +6,6 @@ type Person = {
 const person = {
     name: 'Jane',
     age: 2,
-    
 }
 
 const personTwo = {

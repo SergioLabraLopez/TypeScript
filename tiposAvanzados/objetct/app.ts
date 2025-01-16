@@ -1,0 +1,1 @@
+// no se permite usar objetos en typescript
