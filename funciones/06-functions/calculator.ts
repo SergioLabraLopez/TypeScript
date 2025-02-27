@@ -23,7 +23,7 @@ const multiply = (a: number, b: number): number => {
  */
 type Action = {
   name: string;
-  do: Function;
+  do: (a: number, b: number) => number;
 }
 
 const ACTIONS: Action[] = [
@@ -46,18 +46,18 @@ const ACTIONS: Action[] = [
 ];
 
 // Element is type HTMLElement
-function updateUserMoneyText(element: HTMLElement, actualMoney: string) {
-  element.innerHTML = actualMoney;
+function updateUserMoneyText(element: HTMLElement, actualMoney: number): void {
+  element.innerHTML = actualMoney.toString();
 }
 
 function randomNumber(max: number): number {
   return Math.round(Math.random() * max);
 }
 
-function playTheGame({ actions, totalClick, onError, onSuccess, userMoney }) {
+function playTheGame({ actions, totalClick, onError, onSuccess, userMoney }: PlayTheGameParams): number | never {
   const randomIndex = randomNumber(actions.length);
   const A_MILLION = 1000000;
-  const action = actions[randomIndex];
+  const action: Action | undefined = actions[randomIndex];
 
   if (!action) {
     onError(randomIndex, actions);
@@ -81,33 +81,41 @@ function playTheGame({ actions, totalClick, onError, onSuccess, userMoney }) {
   return newMoney;
 }
 
-function disableClickButton(button: HTMLElement, handleClick) {
-  // button.disabled = true;
+function disableClickButton($button: HTMLButtonElement, handleClick?: () => void) {
+  $button.disabled = true;
 
   if (typeof handleClick === 'function') {
-    button.removeEventListener('click', handleClick);
+    $button.removeEventListener('click', handleClick);
   }
 }
 
-const $button = document.getElementById('button');
+const $button = document.getElementById('button') as HTMLButtonElement;
 const $userMoneyText = document.getElementById('moneyText');
 let userMoney = 1000;
 let totalClick = 0;
 
+type PlayTheGameParams = {
+  actions: Action[];
+  totalClick: number;
+  onError: (randomIndex: number, actions: Action[]) => void;
+  onSuccess?: (totalClick: number) => void;
+  userMoney: number;
+};
+
 updateUserMoneyText($userMoneyText, userMoney);
 
-button.addEventListener('click', function handleClick() {
+$button.addEventListener('click', function handleClick() {
   totalClick++;
 
-  const params = {
+  const params: PlayTheGameParams = {
     actions: ACTIONS,
     totalClick,
-    userMoney: userMoney,
+    userMoney,
     onError: function (index, actions) {
       console.log(index, actions);
     },
     onSuccess: function (totalClick) {
-      disableClickButton(button, handleClick);
+      disableClickButton($button, handleClick);
       console.log('Te has convertido en millonario al hacer un total de: ', totalClick, ' clicks');
     },
   };
